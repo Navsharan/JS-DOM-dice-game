@@ -9,7 +9,7 @@ GAME RULES:
 
 */
 
-var scores, roundScore, activePlayer, gamePlaying;
+var scores, roundScore, activePlayer, gamePlaying, lastDice;
 
 init();
 
@@ -23,8 +23,13 @@ document.querySelector('.btn-roll').addEventListener('click', function() {
         diceDOM.style.display = 'block';
         diceDOM.src = 'dice-' + dice + '.png';
 
-        //3. Update the round score IF the rolled number was NOT a 1
-        if (dice !== 1) {
+        //3. Update the round score IF the rolled number was NOT a 1 or no two consicutive 6.
+        if (dice === 6 && lastDice === 6) {
+            //Player looses score.
+            scores[activePlayer] = 0;
+            document.querySelector("#score-" + activePlayer).textContent = "0";
+            nextPlayer();
+        } else if (dice !== 1) {
             //Add score
             roundScore += dice;
             document.querySelector('#current-' + activePlayer).textContent = roundScore;
@@ -32,6 +37,8 @@ document.querySelector('.btn-roll').addEventListener('click', function() {
             //Next player
             nextPlayer();
         }
+
+        lastDice = dice;
     }    
 });
 
@@ -83,7 +90,6 @@ function init() {
     gamePlaying = true;
     
     document.querySelector('.dice').style.display = 'none';
-
     document.getElementById('score-0').textContent = '0';
     document.getElementById('score-1').textContent = '0';
     document.getElementById('current-0').textContent = '0';
